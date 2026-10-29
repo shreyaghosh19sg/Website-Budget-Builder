@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Website Budget Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #fdf2f8, #ecfeff);
+            color: #111;
+            animation: bgMove 10s ease infinite;
+            background-size: 400% 400%;
+        }
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        header {
+            padding: 25px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            color: #4338ca;
+            letter-spacing: 0.5px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 22px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,.1);
+            margin-bottom: 25px;
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 60px rgba(0,0,0,.15);
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 18px;
+            color: #374151;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            font-size: 16px;
+            transition: border .3s ease, box-shadow .3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.2);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            border-radius: 14px;
+            border: none;
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 10px 25px rgba(99,102,241,.4);
+            transition: all .3s ease;
+        }
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(99,102,241,.6);
+        }
+        .phases {
+            margin-top: 25px;
+        }
+        .phase {
+            padding: 18px;
+            border-radius: 16px;
+            background: #f9fafb;
+            border-left: 6px solid #6366f1;
+            margin-bottom: 18px;
+            transition: background .3s ease, transform .3s ease;
+        }
+        .phase:hover {
+            background: #eef2ff;
+            transform: translateX(4px);
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        @media (max-width: 768px) {
+            header { font-size: 26px; }
+            .input-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>Website Budget Builder</header>
+    <div class="container">
+        <div class="card">
+            <label>Project Name</label>
+            <input type="text" id="projectName" placeholder="Enter your project name (e.g., E-commerce Store)">
+            
+            <div class="input-group">
+                <div>
+                    <label>Project Type</label>
+                    <select id="projectType">
+                        <option value="E-commerce Website">🛒 E-commerce Website</option>
+                        <option value="Corporate Website">🏢 Corporate Website</option>
+                        <option value="Portfolio Website">🎨 Portfolio Website</option>
+                        <option value="Blog/Content Website">📝 Blog/Content Website</option>
+                        <option value="Educational/LMS Website">📚 Educational/LMS Website</option>
+                        <option value="Real Estate Website">🏠 Real Estate Website</option>
+                        <option value="Healthcare Website">🏥 Healthcare Website</option>
+                        <option value="Restaurant/Food Website">🍽️ Restaurant/Food Website</option>
+                        <option value="Non-Profit Website">🤝 Non-Profit Website</option>
+                        <option value="Event/Wedding Website">🎉 Event/Wedding Website</option>
+                        <option value="Travel/Tourism Website">✈️ Travel/Tourism Website</option>
+                        <option value="SaaS/Web Application">🚀 SaaS/Web Application</option>
+                        <option value="News/Magazine Website">📰 News/Magazine Website</option>
+                        <option value="Community Forum">💬 Community Forum</option>
+                        <option value="Booking/Reservation System">📅 Booking/Reservation System</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Project Scale</label>
+                    <select id="projectScale">
+                        <option value="Small">📱 Small</option>
+                        <option value="Medium" selected>💻 Medium</option>
+                        <option value="Large">🏢 Large</option>
+                        <option value="Enterprise">🚀 Enterprise</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div>
+                    <label>Budget Range (Indian Rupee)</label>
+                    <select id="budgetRange">
+                        <option value="₹5,000 - ₹25,000">💰 ₹5,000 - ₹25,000 (Basic Website)</option>
+                        <option value="₹25,001 - ₹50,000">💰 ₹25,001 - ₹50,000 (Small Business)</option>
+                        <option value="₹50,001 - ₹1,00,000">💰 ₹50,001 - ₹1,00,000 (Standard Business)</option>
+                        <option value="₹1,00,001 - ₹5,00,000">💰 ₹1,00,001 - ₹5,00,000 (Advanced Business)</option>
+                        <option value="₹5,00,001 - ₹10,00,000">💰 ₹5,00,001 - ₹10,00,000 (Enterprise)</option>
+                        <option value="₹10,00,001 - ₹50,00,000">💰 ₹10,00,001 - ₹50,00,000 (Large Scale)</option>
+                        <option value="₹50,00,001 - ₹1,00,00,000">💰 ₹50,00,001 - ₹1,00,00,000 (Enterprise Suite)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Development Approach</label>
+                    <select id="devApproach">
+                        <option value="Standard Development">⚡ Standard Development</option>
+                        <option value="Agile/Iterative">🔄 Agile/Iterative</option>
+                        <option value="Rapid Prototyping">🚀 Rapid Prototyping</option>
+                        <option value="Phased Delivery">📅 Phased Delivery</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button onclick="generateBudget()">Generate Budget Using AI</button>
+        </div>
+
+        <div class="card" id="output" style="display:none">
+            <h2 id="projectTitle">📊 Project Phases & Budget</h2>
+            <div class="phases" id="phases"></div>
+            <button onclick="generatePDF()">📄 Download Detailed PDF Report</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_KEY = "AIzaSyCquDThm4xZnNv4fXFrmcDQ6ehYGqjXQ3k";
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+        
+        // Global variables
+        let projectData = {};
+        let parsedPhases = [];
+
+        // Main function to generate budget
+        async function generateBudget() {
+            const projectName = document.getElementById('projectName').value || "Website Project";
+            const type = document.getElementById('projectType').value;
+            const scale = document.getElementById('projectScale').value;
+            const budgetRange = document.getElementById('budgetRange').value;
+            const devApproach = document.getElementById('devApproach').value;
+            
+            // Store project data
+            projectData = {
+                name: projectName,
+                type: type,
+                scale: scale,
+                budgetRange: budgetRange,
+                devApproach: devApproach,
+                date: new Date().toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                })
+            };
+            
+            // Update UI
+            document.getElementById('projectTitle').textContent = `📊 ${projectName} - Budget Proposal`;
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('phases').innerHTML = '<div style="text-align:center;padding:20px;">⏳ Generating AI-powered budget analysis...</div>';
+
+            // AI Prompt
+            const prompt = `Create a detailed WEBSITE PROJECT BUDGET for an Indian client.
+Project Name: ${projectName}
+Project Type: ${type}
+Project Scale: ${scale}
+Budget Range: ${budgetRange} (Indian Rupees)
+Development Approach: ${devApproach}
+
+IMPORTANT INSTRUCTIONS:
+1. Return exactly 5 phases, no more, no less
+2. For each phase, use this exact format:
+PHASE [number]: [Phase Name]
+Description: [2-3 sentences description]
+Time Duration: [number] working days
+Price in Indian Rupee: ₹[amount] (use Indian numbering system with commas)
+Team Members Required: [list roles]
+Key Deliverables: [list 3-4 deliverables]
+
+3. Make the total cost fit within the budget range of ${budgetRange}
+4. Use only plain text, NO markdown, NO asterisks, NO special characters
+5. Separate phases with a blank line
+6. Keep language professional but simple`;
+
+            try {
+                const response = await fetch(API_URL + "?key=" + API_KEY, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        contents: [{ 
+                            parts: [{ text: prompt }] 
+                        }] 
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API responded with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    parsedPhases = parsePhases(aiText);
+                    renderPhases(parsedPhases);
+                } else {
+                    throw new Error("Invalid response format from AI API");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('phases').innerHTML = 
+                    `<div style="color:#dc2626;text-align:center;padding:20px;">
+                        <h3>⚠️ Using Sample Data</h3>
+                        <p>AI service is unavailable. Showing sample budget for demonstration.</p>
+                    </div>`;
+                
+                parsedPhases = getSamplePhases();
+                renderPhases(parsedPhases);
+            }
+        }
+
+        // Clean text for PDF
+        function cleanForPDF(text) {
+            if (!text) return "";
+            return text
+                .replace(/[^\x20-\x7E\u20B9\n\r,.\-:;()₹]/g, '')
+                .replace(/\*/g, '')
+                .trim();
+        }
+
+        // Parse AI text into structured phases
+        function parsePhases(text) {
+            const phases = [];
+            const cleanedText = cleanForPDF(text);
+            
+            const phaseSections = cleanedText.split(/(?=PHASE\s*\d+:)/gi);
+            
+            for (const section of phaseSections) {
+                if (!section.trim()) continue;
+                
+                const lines = section.split('\n').map(line => line.trim()).filter(line => line);
+                
+                if (lines.length < 2) continue;
+                
+                const phase = {
+                    name: '',
+                    description: '',
+                    timeDuration: '',
+                    price: '',
+                    team: '',
+                    deliverables: ''
+                };
+                
+                const firstLine = lines[0];
+                const phaseMatch = firstLine.match(/PHASE\s*\d+:\s*(.+)/i);
+                phase.name = phaseMatch ? phaseMatch[1] : firstLine.replace(/^PHASE\s*\d+:\s*/i, '');
+                
+                let currentField = '';
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i];
+                    
+                    if (line.toLowerCase().startsWith('description:')) {
+                        currentField = 'description';
+                        phase.description = line.substring('description:'.length).trim();
+                    } else if (line.toLowerCase().startsWith('time duration:')) {
+                        currentField = 'timeDuration';
+                        phase.timeDuration = line.substring('time duration:'.length).trim();
+                    } else if (line.toLowerCase().includes('price')) {
+                        currentField = 'price';
+                        phase.price = line.substring(line.indexOf(':') + 1).trim();
+                    } else if (line.toLowerCase().startsWith('team members required:')) {
+                        currentField = 'team';
+                        phase.team = line.substring('team members required:'.length).trim();
+                    } else if (line.toLowerCase().startsWith('key deliverables:')) {
+                        currentField = 'deliverables';
+                        phase.deliverables = line.substring('key deliverables:'.length).trim();
+                    } else if (currentField && line) {
+                        phase[currentField] += ' ' + line;
+                    }
+                }
+                
+                Object.keys(phase).forEach(key => {
+                    if (typeof phase[key] === 'string') {
+                        phase[key] = phase[key].trim().replace(/\s+/g, ' ');
+                    }
+                });
+                
+                if (phase.name) {
+                    phases.push(phase);
+                }
+            }
+            
+            return phases.length > 0 ? phases.slice(0, 5) : getSamplePhases();
+        }
+
+        // Sample phases for fallback
+        function getSamplePhases() {
+            return [
+                {
+                    name: "Requirement Analysis & Planning",
+                    description: "Gather and document project requirements, create sitemap, define user flows, and plan the project timeline.",
+                    timeDuration: "5-7 working days",
+                    price: "₹15,000 - ₹25,000",
+                    team: "Project Manager, Business Analyst",
+                    deliverables: "Project Requirements Document, Sitemap, Wireframes"
+                },
+                {
+                    name: "UI/UX Design",
+                    description: "Create user interface designs, user experience flows, and interactive prototypes.",
+                    timeDuration: "10-15 working days",
+                    price: "₹35,000 - ₹50,000",
+                    team: "UI/UX Designer, Graphic Designer",
+                    deliverables: "Design Mockups, Interactive Prototype, Style Guide"
+                },
+                {
+                    name: "Frontend Development",
+                    description: "Convert designs to responsive HTML/CSS, implement JavaScript functionality, and ensure cross-browser compatibility.",
+                    timeDuration: "15-20 working days",
+                    price: "₹45,000 - ₹65,000",
+                    team: "Frontend Developer, UI Developer",
+                    deliverables: "Responsive Website, Interactive Elements, Mobile Optimization"
+                },
+                {
+                    name: "Backend Development",
+                    description: "Develop server-side functionality, database design, API integration, and content management system.",
+                    timeDuration: "20-25 working days",
+                    price: "₹60,000 - ₹85,000",
+                    team: "Backend Developer, Database Administrator",
+                    deliverables: "Database Structure, Admin Panel, API Endpoints"
+                },
+                {
+                    name: "Testing & Deployment",
+                    description: "Comprehensive testing including functionality, performance, security, and deployment to production server.",
+                    timeDuration: "8-12 working days",
+                    price: "₹20,000 - ₹35,000",
+                    team: "QA Tester, DevOps Engineer",
+                    deliverables: "Test Reports, Live Website, Documentation"
+                }
+            ];
+        }
+
+        // Render phases to the UI
+        function renderPhases(phases) {
+            const container = document.getElementById('phases');
+            container.innerHTML = '';
+            
+            const summary = document.createElement('div');
+            summary.className = 'phase';
+            summary.style.backgroundColor = '#f0f9ff';
+            summary.innerHTML = `
+                <h3>📋 Project Summary</h3>
+                <p><strong>Project:</strong> ${projectData.name}</p>
+                <p><strong>Type:</strong> ${projectData.type}</p>
+                <p><strong>Scale:</strong> ${projectData.scale}</p>
+                <p><strong>Budget Range:</strong> ${projectData.budgetRange}</p>
+                <p><strong>Development Approach:</strong> ${projectData.devApproach}</p>
+                <p><strong>Date:</strong> ${projectData.date}</p>
+            `;
+            container.appendChild(summary);
+            
+            phases.forEach((phase, i) => {
+                const div = document.createElement('div');
+                div.className = 'phase';
+                
+                const content = `
+                    <strong>📝 Description:</strong> ${phase.description || 'Not specified'}<br><br>
+                    <strong>⏱️ Time Duration:</strong> ${phase.timeDuration || 'Not specified'}<br><br>
+                    <strong>💰 Price:</strong> ${phase.price || 'Not specified'}<br><br>
+                    <strong>👥 Team:</strong> ${phase.team || 'Not specified'}<br><br>
+                    <strong>📦 Deliverables:</strong> ${phase.deliverables || 'Not specified'}
+                `;
+                
+                div.innerHTML = `<h3>Phase ${i+1}: ${phase.name}</h3><div style="line-height:1.6">${content}</div>`;
+                container.appendChild(div);
+            });
+            
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'phase';
+            totalDiv.style.backgroundColor = '#f0fdf4';
+            totalDiv.innerHTML = `
+                <h3>💰 Estimated Total Investment</h3>
+                <p style="font-size:18px">Please review the detailed breakdown above. The total project cost will be finalized after requirement analysis.</p>
+                <p><strong>Selected Budget Range:</strong> ${projectData.budgetRange}</p>
+                <p><strong>Important Note:</strong> All prices are estimates in Indian Rupee (₹). Final quote may vary based on specific requirements.</p>
+            `;
+            container.appendChild(totalDiv);
+        }
+
+        // PDF Generation with corrected 2nd page for Executive Summary and Phase Overview
+        function generatePDF() {
+            try {
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    throw new Error("jsPDF library not loaded properly.");
+                }
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 20;
+                const contentWidth = pageWidth - (margin * 2);
+                let y = 20;
+                
+                // ============ PAGE 1: COVER PAGE ============
+                pdf.setFillColor(99, 102, 241);
+                pdf.rect(0, 0, pageWidth, 40, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(24);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Website Budget Builder", pageWidth/2, 25, { align: "center" });
+                pdf.setFontSize(14);
+                pdf.text("Project Budget Proposal", pageWidth/2, 35, { align: "center" });
+                
+                y = 60;
+                
+                pdf.setTextColor(31, 41, 55);
+                pdf.setFontSize(20);
+                pdf.text(projectData.name, pageWidth/2, y, { align: "center" });
+                
+                y += 20;
+                
+                pdf.setFillColor(248, 250, 252);
+                pdf.roundedRect(margin, y, contentWidth, 120, 5, 5, 'F');
+                
+                pdf.setFontSize(16);
+                pdf.text("Project Overview", margin + 10, y + 15);
+                
+                pdf.setDrawColor(209, 213, 219);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin + 10, y + 20, margin + 100, y + 20);
+                
+                pdf.setFontSize(11);
+                pdf.setFont("helvetica", "normal");
+                
+                const details = [
+                    `Project Name: ${projectData.name}`,
+                    `Project Type: ${projectData.type}`,
+                    `Project Scale: ${projectData.scale}`,
+                    `Budget Range: ${projectData.budgetRange}`,
+                    `Development Approach: ${projectData.devApproach}`,
+                    `Proposal Date: ${projectData.date}`,
+                    `Total Phases: ${parsedPhases.length}`,
+                    `Document ID: BUD-${Date.now().toString().slice(-6)}`
+                ];
+                
+                details.forEach((detail, i) => {
+                    pdf.text(detail, margin + 15, y + 35 + (i * 8));
+                });
+                
+                y += 140;
+                
+                pdf.setFontSize(12);
+                pdf.setTextColor(120, 120, 120);
+                pdf.text("Prepared by: Website Budget Builder", margin, y);
+                pdf.text(`Page 1 of ${parsedPhases.length + 2}`, pageWidth/2, pageHeight - 10, { align: "center" });
+                
+                // ============ PAGE 2: EXECUTIVE SUMMARY AND PHASE OVERVIEW ============
+                pdf.addPage();
+                y = 30;
+                
+                pdf.setFillColor(16, 185, 129);
+                pdf.rect(0, 0, pageWidth, 25, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(16);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Executive Summary & Phase Overview", pageWidth/2, 17, { align: "center" });
+                
+                y = 40;
+                
+                pdf.setTextColor(31, 41, 55);
+                pdf.setFontSize(12);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Executive Summary", margin, y);
+                
+                pdf.setDrawColor(209, 213, 219);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin, y + 3, margin + 60, y + 3);
+                
+                y += 15;
+                
+                pdf.setFontSize(8);
+                pdf.setFont("helvetica", "normal");
+                const summaryText = `This comprehensive budget proposal outlines the estimated costs, timeline, and resource requirements for developing the "${projectData.name}" website. The project follows a ${projectData.devApproach.toLowerCase()} approach and is structured into ${parsedPhases.length} distinct phases, each with specific deliverables and milestones. The total estimated investment aligns with your selected budget range of ${projectData.budgetRange}. This proposal serves as a detailed roadmap for successful project execution while maintaining financial transparency and control.`;
+                
+                pdf.text(pdf.splitTextToSize(summaryText, contentWidth), margin, y);
+                
+                y += 25;
+                
+                // Phase Overview Table
+                pdf.setFontSize(14);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Phase Overview", margin, y);
+                
+                pdf.setDrawColor(209, 213, 219);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin, y + 5, margin + 50, y + 5);
+                
+                y += 15;
+                
+                // Create phase overview table
+                const tableTop = y;
+                const colWidths = [30, 60, 40, 40];
+                
+                // Table header
+                pdf.setFillColor(243, 244, 246);
+                pdf.rect(margin, y, contentWidth, 12, 'F');
+                pdf.setTextColor(31, 41, 55);
+                pdf.setFontSize(9);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Phase", margin + 5, y + 8);
+                pdf.text("Phase Name", margin + 40, y + 8);
+                pdf.text("Duration", margin + 105, y + 8);
+                pdf.text("Cost (₹)", margin + 140, y + 8);
+                
+                y += 12;
+                
+                // Table rows
+                pdf.setFont("helvetica", "normal");
+                let totalDays = 0;
+                let totalCost = 0;
+                
+                parsedPhases.forEach((phase, index) => {
+                    if (y > pageHeight - 30) {
+                        pdf.addPage();
+                        y = 30;
+                        tableTop = y;
+                    }
+                    
+                    // Alternate row colors
+                    if (index % 2 === 0) {
+                        pdf.setFillColor(255, 255, 255);
+                    } else {
+                        pdf.setFillColor(249, 250, 251);
+                    }
+                    pdf.rect(margin, y, contentWidth, 25, 'F');
+                    
+                    // Phase number
+                    pdf.setFontSize(10);
+                    pdf.setFont("helvetica", "bold");
+                    pdf.text(`${index + 1}`, margin + 5, y + 10);
+                    
+                    // Phase name
+                    const phaseName = cleanForPDF(phase.name);
+                    const phaseNameLines = pdf.splitTextToSize(phaseName, 60);
+                    pdf.setFontSize(9);
+                    pdf.text(phaseNameLines, margin + 40, y + 10);
+                    
+                    // Duration
+                    const duration = cleanForPDF(phase.timeDuration);
+                    pdf.text(duration || "N/A", margin + 105, y + 10);
+                    
+                    // Extract numeric cost for calculation
+                    const costText = cleanForPDF(phase.price);
+                    const costMatch = costText.match(/₹?([\d,]+)/);
+                    if (costMatch) {
+                        const costNum = parseInt(costMatch[1].replace(/,/g, ''));
+                        if (!isNaN(costNum)) {
+                            totalCost += costNum;
+                        }
+                    }
+                    pdf.text(costText || "N/A", margin + 140, y + 10);
+                    
+                    // Extract days for calculation
+                    const daysMatch = duration?.match(/(\d+)/);
+                    if (daysMatch) {
+                        totalDays += parseInt(daysMatch[1]);
+                    }
+                    
+                    // Key deliverables preview
+                    const deliverables = cleanForPDF(phase.deliverables);
+                    const deliverablesLines = pdf.splitTextToSize(deliverables?.split(',').slice(0, 2).join(', ') || "N/A", 80);
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(107, 114, 128);
+                    pdf.text(deliverablesLines, margin + 40, y + 20);
+                    
+                    pdf.setTextColor(31, 41, 55);
+                    y += 25;
+                });
+                
+                // Summary footer for table
+                y += 5;
+                pdf.setFillColor(239, 246, 255);
+                pdf.rect(margin, y, contentWidth, 25, 'F');
+                pdf.setFontSize(10);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Total", margin + 5, y + 10);
+                pdf.text(`${totalDays} days`, margin + 105, y + 10);
+                pdf.text(`₹${totalCost.toLocaleString('en-IN')}`, margin + 140, y + 10);
+                
+                pdf.setFontSize(9);
+                pdf.setFont("helvetica", "normal");
+                pdf.text(`Total estimated project duration: ${totalDays} working days (approx ${Math.ceil(totalDays/20)} months)`, margin + 40, y + 20);
+                
+                y += 30;
+                
+               
+                
+                // ============ ONE PAGE PER PHASE ============
+                parsedPhases.forEach((phase, index) => {
+                    pdf.addPage();
+                    y = 30;
+                    
+                    pdf.setFillColor(79, 70, 229);
+                    pdf.rect(0, 0, pageWidth, 25, 'F');
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFontSize(18);
+                    pdf.setFont("helvetica", "bold");
+                    
+                    const cleanPhaseName = cleanForPDF(phase.name);
+                    pdf.text(`Phase ${index + 1}: ${cleanPhaseName}`, margin, 17);
+                    
+                    pdf.setFontSize(10);
+                    pdf.text(`Project: ${projectData.name}`, pageWidth - margin, 17, { align: "right" });
+                    
+                    y = 40;
+                    
+                    const phaseDetails = [
+                        { label: "Description", value: cleanForPDF(phase.description || "Not specified") },
+                        { label: "Time Duration", value: cleanForPDF(phase.timeDuration || "Not specified") },
+                        { label: "Price in Indian Rupee", value: cleanForPDF(phase.price || "Not specified") },
+                        { label: "Team Members Required", value: cleanForPDF(phase.team || "Not specified") },
+                        { label: "Key Deliverables", value: cleanForPDF(phase.deliverables || "Not specified") }
+                    ];
+                    
+                    phaseDetails.forEach((detail, i) => {
+                        if (y > pageHeight - 50 && i < phaseDetails.length - 1) {
+                            pdf.addPage();
+                            y = 30;
+                            pdf.setFillColor(79, 70, 229);
+                            pdf.rect(0, 0, pageWidth, 25, 'F');
+                            pdf.setTextColor(255, 255, 255);
+                            pdf.setFontSize(14);
+                            pdf.text(`Phase ${index + 1}: ${cleanPhaseName} (Continued)`, margin, 17);
+                            y = 40;
+                        }
+                        
+                        const bgColors = [
+                            [239, 246, 255],
+                            [254, 252, 232],
+                            [240, 253, 244],
+                            [255, 247, 237],
+                            [245, 243, 255]
+                        ];
+                        
+                        pdf.setFillColor(...bgColors[i % bgColors.length]);
+                        pdf.roundedRect(margin, y, contentWidth, 40, 3, 3, 'F');
+                        
+                        pdf.setTextColor(31, 41, 55);
+                        pdf.setFontSize(11);
+                        pdf.setFont("helvetica", "bold");
+                        pdf.text(detail.label + ":", margin + 5, y + 10);
+                        
+                        pdf.setFont("helvetica", "normal");
+                        pdf.setFontSize(10);
+                        
+                        const contentLines = pdf.splitTextToSize(detail.value, contentWidth - 10);
+                        pdf.text(contentLines, margin + 5, y + 20);
+                        
+                        y += 45 + (contentLines.length * 4);
+                    });
+                    
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(120, 120, 120);
+                    pdf.text(`Phase ${index + 1} | Page ${index + 3} of ${parsedPhases.length + 2}`, pageWidth/2, pageHeight - 10, { align: "center" });
+                });
+                
+                // ============ FINAL PAGE: SUMMARY & NEXT STEPS ============
+                pdf.addPage();
+                y = 30;
+                
+                pdf.setFillColor(16, 185, 129);
+                pdf.rect(0, 0, pageWidth, 25, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(18);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Project Summary & Next Steps", margin, 17);
+                
+                y = 50;
+                
+                pdf.setTextColor(31, 41, 55);
+                pdf.setFontSize(16);
+                pdf.text("Total Investment Summary", margin, y);
+                
+                pdf.setDrawColor(209, 213, 219);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin, y + 5, margin + 80, y + 5);
+                
+                y += 20;
+                
+                pdf.setFontSize(12);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Approved Budget Range:", margin, y);
+                pdf.setFont("helvetica", "normal");
+                pdf.text(projectData.budgetRange, margin + 60, y);
+                
+                y += 15;
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Total Phases:", margin, y);
+                pdf.setFont("helvetica", "normal");
+                pdf.text(parsedPhases.length.toString(), margin + 60, y);
+                
+                y += 15;
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Estimated Timeline:", margin, y);
+                pdf.setFont("helvetica", "normal");
+                pdf.text(`${totalDays} working days (approx ${Math.ceil(totalDays/20)} months)`, margin + 60, y);
+                
+                y += 30;
+                
+                pdf.setFontSize(14);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Next Steps", margin, y);
+                
+                pdf.setFontSize(10);
+                pdf.setFont("helvetica", "normal");
+                const nextSteps = [
+                    "1. Review this proposal and provide feedback",
+                    "2. Schedule a kickoff meeting to discuss requirements",
+                    "3. Sign the project agreement",
+                    "4. Provide initial payment to commence Phase 1",
+                    "5. Regular progress reviews as per the development approach"
+                ];
+                
+                nextSteps.forEach((step, i) => {
+                    pdf.text(step, margin + 5, y + 20 + (i * 8));
+                });
+                
+                y += 60;
+                
+                pdf.setFillColor(254, 252, 232);
+                pdf.roundedRect(margin, y, contentWidth, 60, 5, 5, 'F');
+                
+                pdf.setTextColor(146, 64, 14);
+                pdf.setFontSize(10);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Important Notes", margin + 12, y + 15);
+                
+                pdf.setFontSize(8);
+                pdf.setFont("helvetica", "normal");
+        
+                const notes = [
+                    "• All prices are estimates in Indian Rupee (₹) excluding GST",
+                    "• Final quote may vary based on specific requirements",
+                    "• Timeline is estimated in working days (Monday-Friday)",
+                    "• Team composition may change based on availability",
+                    "• This proposal is valid for 30 days from the date of issue",
+                    "• Payment terms: 50% advance, 40% on milestone, 10% on completion"
+                ];
+                
+                notes.forEach((note, i) => {
+                    pdf.text(note, margin + 15, y + 30 + (i * 7));
+                });
+                
+                pdf.setFontSize(8);
+                pdf.setTextColor(120, 120, 120);
+                pdf.text(`Page ${parsedPhases.length + 2} of ${parsedPhases.length + 2}`, pageWidth/2, pageHeight - 10, { align: "center" });
+                
+                const fileName = projectData.name.replace(/[^a-z0-9]/gi, '_') + '_Budget_Proposal.pdf';
+                pdf.save(fileName);
+                
+            } catch (error) {
+                console.error("PDF Generation Error:", error);
+                alert("Error generating PDF. Please try again or use the sample data.");
+            }
+        }
+    </script>
+</body>
+</html>
